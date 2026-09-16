@@ -1,101 +1,63 @@
-import { Card, Button, Avatar, Chip } from "@heroui/react";
+import { Avatar, Button, Card, Chip } from "@heroui/react";
 import type { Exercise } from "../data/exercises";
 import { useApp } from "../context/useApp";
+import ExerciseAssignmentMenu from "./ExerciseAssignmentMenu";
+import { HeartIcon, PlayIcon } from "./Icons";
 
 interface ExerciseCardProps {
   exercise: Exercise;
   onSelect: (exercise: Exercise) => void;
+  showSessionActions?: boolean;
 }
 
-const categoryColor: Record<string, "accent" | "success" | "warning"> = {
+const categoryColor: Record<Exercise["category"], "accent" | "success" | "warning"> = {
   mobility: "accent",
   physio: "success",
   work: "warning",
 };
 
-const categoryInitials: Record<string, string> = {
-  mobility: "M",
-  physio: "F",
-  work: "T",
+const categoryMeta: Record<Exercise["category"], { initial: string; label: string }> = {
+  mobility: { initial: "M", label: "Movilidad" },
+  physio: { initial: "F", label: "Fisioterapia" },
+  work: { initial: "T", label: "Trabajo" },
 };
 
-export default function ExerciseCard({ exercise, onSelect }: ExerciseCardProps) {
+export default function ExerciseCard({ exercise, onSelect, showSessionActions = false }: ExerciseCardProps) {
   const { isFavorite, toggleFavorite } = useApp();
-  const fav = isFavorite(exercise.id);
+  const favorite = isFavorite(exercise.id);
   const color = categoryColor[exercise.category];
-  const initial = categoryInitials[exercise.category];
-
-  const handlePress = () => onSelect(exercise);
+  const meta = categoryMeta[exercise.category];
+  const hasVideo = Boolean(exercise.driveFileId);
 
   return (
-    <Card className="hover:shadow-md transition-shadow">
-      <Card.Content className="p-3 flex flex-col gap-2">
-        {/* Top row: avatar + heart */}
-        <div className="flex items-center justify-between">
-          <Avatar size="sm" color={color} variant="soft">
-            <Avatar.Fallback>{initial}</Avatar.Fallback>
-          </Avatar>
-          <Button
-            isIconOnly
-            variant="ghost"
-            size="sm"
-            aria-label={fav ? "Quitar de favoritos" : "Añadir a favoritos"}
-            onPress={() => toggleFavorite(exercise.id)}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className={`h-5 w-5 ${fav ? "text-danger" : "text-muted"}`}
-              viewBox="0 0 20 20"
-              fill={fav ? "currentColor" : "none"}
-              stroke="currentColor"
-              strokeWidth={fav ? 0 : 1.5}
-            >
-              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
-            </svg>
-          </Button>
-        </div>
-
-        {/* Clickable content area: title + chip */}
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={handlePress}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              handlePress();
-            }
-          }}
-          className="flex flex-col gap-2 cursor-pointer"
-        >
-          <p className="font-semibold text-foreground line-clamp-2 text-sm">
-            {exercise.title}
-          </p>
-          <div>
-            <Chip size="sm" color={color} variant="soft">
-              {exercise.duration}
-            </Chip>
+    <Card className="h-full border border-border/60 transition-[box-shadow,transform] hover:-translate-y-0.5 hover:shadow-md" role="article" aria-labelledby={`exercise-${exercise.id}`}>
+      <Card.Header className="flex-row items-start gap-3">
+        <Avatar size="sm" color={color} variant="soft" aria-label={meta.label}>
+          <Avatar.Fallback>{meta.initial}</Avatar.Fallback>
+        </Avatar>
+        <div className="min-w-0 flex-1">
+          <Card.Title id={`exercise-${exercise.id}`} className="line-clamp-2 text-base text-pretty">{exercise.title}</Card.Title>
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            <Chip size="sm" color={color} variant="soft">{exercise.duration}</Chip>
+            {exercise.frequency === "3x-week" ? <Chip size="sm" variant="tertiary">3× semana</Chip> : null}
           </div>
         </div>
-
-        {/* Action button */}
-        <Button
-          size="sm"
-          variant="tertiary"
-          onPress={handlePress}
-          fullWidth
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="h-4 w-4"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
-            <path d="M8 5v14l11-7z" />
-          </svg>
-          {exercise.driveFileId ? "Ver video" : "Ver detalle"}
+        <Button isIconOnly variant="ghost" size="sm" aria-label={favorite ? `Quitar ${exercise.title} de favoritos` : `Añadir ${exercise.title} a favoritos`} onPress={() => toggleFavorite(exercise.id)}>
+          <HeartIcon filled={favorite} className={`size-5 ${favorite ? "text-danger" : "text-muted"}`} />
         </Button>
+      </Card.Header>
+
+      <Card.Content className="flex-1">
+        <p className="line-clamp-3 text-sm leading-6 text-muted">{exercise.description}</p>
       </Card.Content>
+
+      <Card.Footer className="mt-auto flex flex-wrap items-center justify-between gap-2">
+        <Button size="sm" variant="tertiary" onPress={() => onSelect(exercise)}>
+          <PlayIcon className="size-4" />
+          {hasVideo ? "Ver vídeo" : "Ver detalle"}
+        </Button>
+        {showSessionActions ? <ExerciseAssignmentMenu exercise={exercise} /> : null}
+      </Card.Footer>
     </Card>
   );
 }

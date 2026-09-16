@@ -43,7 +43,7 @@ describe("ExerciseCard", () => {
       <ExerciseCard exercise={mockExerciseWithVideo} onSelect={onSelect} />
     );
 
-    expect(screen.getByRole("button", { name: /Ver video/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Ver vídeo/i })).toBeInTheDocument();
   });
 
   it("shows 'Ver detalle' button when driveFileId is absent", () => {
@@ -55,14 +55,21 @@ describe("ExerciseCard", () => {
     expect(screen.getByRole("button", { name: /Ver detalle/i })).toBeInTheDocument();
   });
 
-  it("calls onSelect when title area is clicked", () => {
+  it("calls onSelect from the semantic detail button", () => {
     const onSelect = vi.fn();
     renderWithProviders(
       <ExerciseCard exercise={mockExerciseWithVideo} onSelect={onSelect} />
     );
 
-    const clickableArea = screen.getByText("Test Exercise").parentElement!;
-    fireEvent.click(clickableArea);
+    fireEvent.click(screen.getByRole("button", { name: /Ver vídeo/i }));
     expect(onSelect).toHaveBeenCalledWith(mockExerciseWithVideo);
+  });
+
+  it("shows routine assignment actions in registry mode", () => {
+    renderWithProviders(
+      <ExerciseCard exercise={mockExerciseWithVideo} onSelect={vi.fn()} showSessionActions />
+    );
+
+    expect(screen.getByRole("button", { name: /Gestionar rutinas/i })).toBeInTheDocument();
   });
 });
