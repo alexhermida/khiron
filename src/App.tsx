@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Tabs } from "@heroui/react";
-import { AppProvider, useApp } from "./context/AppContext";
+import { AppProvider } from "./context/AppContext";
 import { AuthProvider } from "./context/AuthContext";
+import { useApp } from "./context/useApp";
 import AppHeader from "./components/AppHeader";
 import ExerciseGrid from "./components/ExerciseGrid";
 import ExerciseDetailModal from "./components/ExerciseDetailModal";

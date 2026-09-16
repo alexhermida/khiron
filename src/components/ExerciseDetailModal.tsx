@@ -1,7 +1,7 @@
 import { Modal, Button, Chip } from "@heroui/react";
 import type { Exercise } from "../data/exercises";
-import { useApp } from "../context/AppContext";
-import { useAuth } from "../context/AuthContext";
+import { useApp } from "../context/useApp";
+import { useAuth } from "../context/useAuth";
 import { useDriveVideo } from "../hooks/useDriveVideo";
 import { useDriveImage } from "../hooks/useDriveImage";
 import VideoPlayer from "./VideoPlayer";

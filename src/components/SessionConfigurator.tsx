@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Modal, Button, Checkbox, Label } from "@heroui/react";
 import { exercises, type SessionKey } from "../data/exercises";
-import { useApp } from "../context/AppContext";
+import { useApp } from "../context/useApp";
 
 interface SessionConfiguratorProps {
   session: SessionKey;

@@ -1,27 +1,7 @@
-import {
-  createContext,
-  useContext,
-  useCallback,
-  type ReactNode,
-} from "react";
+import { useCallback, type ReactNode } from "react";
 import { usePersistedState } from "../hooks/usePersistedState";
-import {
-  DEFAULT_SESSION_CONFIG,
-  type SessionKey,
-} from "../data/exercises";
-
-type SessionConfig = Record<SessionKey, string[]>;
-
-interface AppState {
-  favorites: string[];
-  toggleFavorite: (id: string) => void;
-  isFavorite: (id: string) => boolean;
-  sessionConfig: SessionConfig;
-  updateSessionConfig: (updater: (prev: SessionConfig) => SessionConfig) => void;
-  resetSessionConfig: () => void;
-}
-
-const AppContext = createContext<AppState | null>(null);
+import { DEFAULT_SESSION_CONFIG } from "../data/exercises";
+import { AppContext, type SessionConfig } from "./app-context";
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [favorites, setFavorites] = usePersistedState<string[]>(
@@ -64,10 +44,4 @@ export function AppProvider({ children }: { children: ReactNode }) {
       {children}
     </AppContext>
   );
-}
-
-export function useApp() {
-  const ctx = useContext(AppContext);
-  if (!ctx) throw new Error("useApp must be used within AppProvider");
-  return ctx;
 }

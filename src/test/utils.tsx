@@ -1,27 +1,10 @@
-import React from "react";
 import { render, type RenderOptions } from "@testing-library/react";
-import { GoogleOAuthProvider } from "@react-oauth/google";
-import { AppProvider } from "../context/AppContext";
-import { AuthProvider } from "../context/AuthContext";
-import { ThemeProvider } from "../context/ThemeContext";
-
-function AllProviders({ children }: { children: React.ReactNode }) {
-  return (
-    <ThemeProvider>
-      <GoogleOAuthProvider clientId="test-client-id">
-        <AppProvider>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </AppProvider>
-      </GoogleOAuthProvider>
-    </ThemeProvider>
-  );
-}
+import type { ReactElement } from "react";
+import TestProviders from "./TestProviders";
 
 export function renderWithProviders(
-  ui: React.ReactElement,
+  ui: ReactElement,
   options?: Omit<RenderOptions, "wrapper">
 ) {
-  return render(ui, { wrapper: AllProviders, ...options });
+  return render(ui, { wrapper: TestProviders, ...options });
 }

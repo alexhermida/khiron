@@ -1,6 +1,6 @@
 import { Card, Button, Avatar, Chip } from "@heroui/react";
 import type { Exercise } from "../data/exercises";
-import { useApp } from "../context/AppContext";
+import { useApp } from "../context/useApp";
 
 interface ExerciseCardProps {
   exercise: Exercise;
