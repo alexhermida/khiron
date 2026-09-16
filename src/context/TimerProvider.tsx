@@ -3,7 +3,7 @@ import { toast } from "@heroui/react";
 import { useTimer } from "../hooks/useTimer";
 import { TimerContext } from "./timer-context";
 
-const ALERT_URL = "https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3";
+const ALERT_URL = `${import.meta.env.BASE_URL}timer-complete.wav`;
 
 export function TimerProvider({ children }: { children: ReactNode }) {
   const audioRef = useRef<HTMLAudioElement | null>(null);

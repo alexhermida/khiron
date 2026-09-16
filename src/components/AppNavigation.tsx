@@ -9,6 +9,7 @@ import {
 } from "../navigation";
 import ThemeToggle from "./ThemeToggle";
 import { MenuIcon } from "./Icons";
+import { InstallAppButton } from "./PwaControls";
 
 function navClassName({ isActive }: { isActive: boolean }) {
   return [
@@ -111,7 +112,10 @@ export function MobileMoreMenu() {
               <nav aria-label="Navegación secundaria" className="space-y-1">
                 {secondaryNavigation.map((item) => <NavigationLink key={item.path} item={item} onNavigate={() => setIsOpen(false)} />)}
               </nav>
-              <div className="mt-6 flex items-center justify-between rounded-2xl bg-surface-secondary p-3">
+              <div className="mt-6">
+                <InstallAppButton />
+              </div>
+              <div className="mt-3 flex items-center justify-between rounded-2xl bg-surface-secondary p-3">
                 <span className="text-sm font-medium text-foreground">Tema de la aplicación</span>
                 <ThemeToggle />
               </div>

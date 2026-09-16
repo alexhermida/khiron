@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import AppHeader from "./AppHeader";
 import { DesktopNavigation, MobileNavigation } from "./AppNavigation";
 import GlobalTimer from "./GlobalTimer";
+import { PwaStatus } from "./PwaControls";
 
 export default function AppShell({ children }: { children: ReactNode }) {
   return (
@@ -15,6 +16,7 @@ export default function AppShell({ children }: { children: ReactNode }) {
             <GlobalTimer />
           </div>
           <main id="main-content" className="mx-auto w-full max-w-6xl px-4 pt-6 pb-44 sm:px-6 sm:pt-8 lg:px-10 lg:pt-2 lg:pb-12">
+            <PwaStatus />
             {children}
           </main>
         </div>
