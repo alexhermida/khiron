@@ -65,11 +65,11 @@ describe("ExerciseCard", () => {
     expect(onSelect).toHaveBeenCalledWith(mockExerciseWithVideo);
   });
 
-  it("shows routine assignment actions in registry mode", () => {
+  it("shows routine assignment actions in registry mode", async () => {
     renderWithProviders(
       <ExerciseCard exercise={mockExerciseWithVideo} onSelect={vi.fn()} showSessionActions />
     );
 
-    expect(screen.getByRole("button", { name: /Gestionar rutinas/i })).toBeInTheDocument();
+    expect(await screen.findByRole("button", { name: /Gestionar rutinas/i })).toBeInTheDocument();
   });
 });

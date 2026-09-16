@@ -1,18 +1,33 @@
-import { useEffect, useState } from "react";
-import { Toast } from "@heroui/react";
+import { lazy, Suspense, useEffect, useState } from "react";
+import { Skeleton, Toast } from "@heroui/react";
 import { HashRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
 import { AuthProvider } from "./context/AuthContext";
 import { TimerProvider } from "./context/TimerProvider";
 import AppShell from "./components/AppShell";
-import ExerciseDetailModal from "./components/ExerciseDetailModal";
-import FavoritesPage from "./pages/FavoritesPage";
-import ExercisesPage from "./pages/ExercisesPage";
-import PhysioPage from "./pages/PhysioPage";
 import RoutinePage from "./pages/RoutinePage";
 import WorkPage from "./pages/WorkPage";
 import { allNavigation } from "./navigation";
 import type { Exercise } from "./data/exercises";
+
+const ExerciseDetailModal = lazy(() => import("./components/ExerciseDetailModal"));
+const ExercisesPage = lazy(() => import("./pages/ExercisesPage"));
+const FavoritesPage = lazy(() => import("./pages/FavoritesPage"));
+const PhysioPage = lazy(() => import("./pages/PhysioPage"));
+
+function PageLoading() {
+  return (
+    <div aria-busy="true" aria-label="Cargando página…" className="space-y-5">
+      <Skeleton className="h-10 w-56 rounded-xl" />
+      <Skeleton className="h-5 w-full max-w-xl rounded-lg" />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        <Skeleton className="h-56 rounded-3xl" />
+        <Skeleton className="h-56 rounded-3xl" />
+        <Skeleton className="h-56 rounded-3xl" />
+      </div>
+    </div>
+  );
+}
 
 function AppContent() {
   const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
@@ -25,6 +40,7 @@ function AppContent() {
 
   return (
     <AppShell>
+      <Suspense fallback={<PageLoading />}>
       <Routes>
         <Route path="/morning" element={<RoutinePage session="morning" onSelect={setSelectedExercise} />} />
         <Route path="/work" element={<WorkPage onSelect={setSelectedExercise} />} />
@@ -34,7 +50,12 @@ function AppContent() {
         <Route path="/favorites" element={<FavoritesPage onSelect={setSelectedExercise} />} />
         <Route path="*" element={<Navigate to="/morning" replace />} />
       </Routes>
-      <ExerciseDetailModal exercise={selectedExercise} onClose={() => setSelectedExercise(null)} />
+      </Suspense>
+      {selectedExercise ? (
+        <Suspense fallback={null}>
+          <ExerciseDetailModal exercise={selectedExercise} onClose={() => setSelectedExercise(null)} />
+        </Suspense>
+      ) : null}
     </AppShell>
   );
 }

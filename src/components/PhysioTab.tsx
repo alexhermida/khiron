@@ -1,4 +1,4 @@
-import { Card, Chip } from "@heroui/react";
+import { Alert, Chip } from "@heroui/react";
 import { exercises, EXERCISES_TO_AVOID, type Exercise } from "../data/exercises";
 import ExerciseGrid from "./ExerciseGrid";
 
@@ -8,49 +8,43 @@ interface PhysioTabProps {
 
 export default function PhysioTab({ onSelect }: PhysioTabProps) {
   const dailyPhysio = exercises.filter(
-    (e) => e.category === "physio" && e.frequency === "daily"
+    (exercise) => exercise.category === "physio" && exercise.frequency === "daily"
   );
   const weeklyPhysio = exercises.filter(
-    (e) => e.category === "physio" && e.frequency === "3x-week"
+    (exercise) => exercise.category === "physio" && exercise.frequency === "3x-week"
   );
 
   return (
-    <div className="space-y-8">
-      <section>
-        <h2 className="text-lg font-bold text-foreground mb-3">
-          Diarios
-        </h2>
+    <div className="space-y-10">
+      <section aria-labelledby="daily-physio">
+        <div className="mb-4">
+          <h2 id="daily-physio" className="text-xl font-bold text-foreground">Cada día</h2>
+          <p className="mt-1 text-sm text-muted">Ejercicios de estabilización y movilidad diaria.</p>
+        </div>
         <ExerciseGrid exercises={dailyPhysio} onSelect={onSelect} />
       </section>
 
-      <section>
-        <h2 className="text-lg font-bold text-foreground mb-3">
-          3x por Semana (días no consecutivos)
-        </h2>
+      <section aria-labelledby="weekly-physio">
+        <div className="mb-4">
+          <h2 id="weekly-physio" className="text-xl font-bold text-foreground">3 veces por semana</h2>
+          <p className="mt-1 text-sm text-muted">Deja al menos 1 día de descanso entre sesiones.</p>
+        </div>
         <ExerciseGrid exercises={weeklyPhysio} onSelect={onSelect} />
       </section>
 
-      <Card className="border-danger/30 bg-danger/10">
-        <Card.Header>
-          <Card.Title className="text-danger">
-            Ejercicios a Evitar
-          </Card.Title>
-        </Card.Header>
-        <Card.Content>
-          <div className="flex flex-wrap gap-2">
-            {EXERCISES_TO_AVOID.map((item) => (
-              <Chip
-                key={item}
-                color="danger"
-                variant="soft"
-                size="sm"
-              >
-                {item}
-              </Chip>
-            ))}
-          </div>
-        </Card.Content>
-      </Card>
+      <Alert status="danger">
+        <Alert.Indicator />
+        <Alert.Content>
+          <Alert.Title>Ejercicios que debes evitar</Alert.Title>
+          <Alert.Description>
+            <div className="mt-2 flex flex-wrap gap-2">
+              {EXERCISES_TO_AVOID.map((item) => (
+                <Chip key={item} color="danger" variant="soft" size="sm">{item}</Chip>
+              ))}
+            </div>
+          </Alert.Description>
+        </Alert.Content>
+      </Alert>
     </div>
   );
 }

@@ -5,19 +5,19 @@ import { renderWithProviders } from "./utils";
 import { EXERCISES_TO_AVOID } from "../data/exercises";
 
 describe("PhysioTab", () => {
-  it("renders both Diarios and 3x per Semana section headings", () => {
+  it("renders daily and weekly section headings", () => {
     const onSelect = vi.fn();
     renderWithProviders(<PhysioTab onSelect={onSelect} />);
 
-    expect(screen.getByText("Diarios")).toBeInTheDocument();
-    expect(screen.getByText("3x por Semana (días no consecutivos)")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Cada día" })).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "3 veces por semana" })).toBeInTheDocument();
   });
 
   it("renders Ejercicios a Evitar section", () => {
     const onSelect = vi.fn();
     renderWithProviders(<PhysioTab onSelect={onSelect} />);
 
-    expect(screen.getByText("Ejercicios a Evitar")).toBeInTheDocument();
+    expect(screen.getByText("Ejercicios que debes evitar")).toBeInTheDocument();
   });
 
   it("renders one chip per EXERCISES_TO_AVOID item", () => {

@@ -1,8 +1,10 @@
+import { lazy, Suspense } from "react";
 import { Avatar, Button, Card, Chip } from "@heroui/react";
 import type { Exercise } from "../data/exercises";
 import { useApp } from "../context/useApp";
-import ExerciseAssignmentMenu from "./ExerciseAssignmentMenu";
 import { HeartIcon, PlayIcon } from "./Icons";
+
+const ExerciseAssignmentMenu = lazy(() => import("./ExerciseAssignmentMenu"));
 
 interface ExerciseCardProps {
   exercise: Exercise;
@@ -56,7 +58,11 @@ export default function ExerciseCard({ exercise, onSelect, showSessionActions = 
           <PlayIcon className="size-4" />
           {hasVideo ? "Ver vídeo" : "Ver detalle"}
         </Button>
-        {showSessionActions ? <ExerciseAssignmentMenu exercise={exercise} /> : null}
+        {showSessionActions ? (
+          <Suspense fallback={<Button size="sm" variant="secondary" isDisabled>Cargando…</Button>}>
+            <ExerciseAssignmentMenu exercise={exercise} />
+          </Suspense>
+        ) : null}
       </Card.Footer>
     </Card>
   );
