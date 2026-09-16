@@ -4,10 +4,12 @@ Aplicación personal de movilidad y rehabilitación espinal, enfocada en la zona
 
 ## Funcionalidades
 
-- Sesiones configurables de mañana y noche: selecciona y ordena ejercicios.
-- Pausas activas en el trabajo con temporizador de 50 minutos.
+- Navegación centrada en las rutinas de mañana, trabajo y noche.
+- Catálogo completo con búsqueda, filtros y asignación de ejercicios a cada rutina.
+- Temporizador global de 50 minutos, persistente mientras navegas o recargas la app.
 - Rutina de fisioterapia con vídeos e imágenes privados mediante Google Drive.
 - Favoritos, recordatorios de ejercicios a evitar y tema claro/oscuro.
+- PWA instalable con rutinas y catálogo disponibles sin conexión.
 - Preferencias guardadas en el navegador mediante localStorage.
 
 > La rutina es personal, no una recomendación médica general. Consulta con un profesional antes de utilizarla o adaptar las cargas y los ejercicios a tu situación.
@@ -23,13 +25,14 @@ pnpm install --frozen-lockfile --ignore-scripts
 pnpm dev
 ```
 
-Abre `http://localhost:5173/khiron/`.
+Abre `http://localhost:5173/khiron/`. La navegación utiliza rutas hash para que los enlaces directos funcionen correctamente en GitHub Pages.
 
 | Comando | Descripción |
 | --- | --- |
 | `pnpm dev` | Servidor local |
 | `pnpm build` | Comprobación de tipos y build en `dist/` |
 | `pnpm preview` | Vista previa del build |
+| `pnpm verify:pwa` | Comprueba manifest e impide cachear media privada |
 | `pnpm test` | Tests |
 | `pnpm test:watch` | Tests en modo watch |
 | `pnpm lint` | ESLint |
@@ -37,6 +40,12 @@ Abre `http://localhost:5173/khiron/`.
 | `pnpm audit --prod` | Auditoría de dependencias de producción |
 
 El lockfile fija las versiones utilizadas. `.npmrc` aplica una cuarentena de 24 horas a versiones nuevas; esto no sustituye las actualizaciones ni la auditoría de seguridad. La instalación no necesita ejecutar scripts de dependencias.
+
+## Instalación en móvil
+
+En navegadores compatibles, abre **Más → Instalar Khiron**. En iPhone o iPad, abre la aplicación en Safari, pulsa **Compartir** y elige **Añadir a pantalla de inicio**.
+
+La aplicación guarda en caché su interfaz y el catálogo. Los vídeos e imágenes privados de Google Drive nunca se almacenan en la caché del service worker y necesitan conexión y autenticación. Los sistemas móviles pueden suspender aplicaciones web en segundo plano, por lo que el temporizador no sustituye una alarma del sistema.
 
 ## Configuración de Google
 

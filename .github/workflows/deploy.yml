@@ -28,6 +28,7 @@ jobs:
           cache: pnpm
 
       - run: pnpm install --frozen-lockfile --ignore-scripts
+      - run: pnpm lint
       - run: pnpm test
 
       - name: Build with Google OAuth
@@ -39,6 +40,8 @@ jobs:
             exit 1
           fi
           pnpm build
+
+      - run: pnpm verify:pwa
 
       - uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
