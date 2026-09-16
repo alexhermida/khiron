@@ -32,7 +32,7 @@ export default function ImageViewer({ src, alt, isLoading, error }: ImageViewerP
 
   return (
     <div className="overflow-hidden rounded-2xl bg-surface-secondary">
-      <img src={src} alt={alt} width="1200" height="900" className="h-auto w-full object-contain" />
+      <img src={src} alt={alt} width="1200" height="900" loading="lazy" decoding="async" className="h-auto w-full object-contain" />
     </div>
   );
 }

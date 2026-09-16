@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Button, Drawer } from "@heroui/react";
+import { Button, Drawer, toast } from "@heroui/react";
 import { Link } from "react-router-dom";
 import { exercises, type SessionKey } from "../data/exercises";
 import { useApp } from "../context/useApp";
@@ -26,6 +26,21 @@ export default function SessionConfigurator({ session }: SessionConfiguratorProp
 
   function moveExercise(id: string, direction: -1 | 1) {
     updateSessionConfig((previous) => moveSessionExercise(previous, session, id, direction));
+  }
+
+  function restoreDefaults() {
+    const previousConfig = sessionConfig;
+    resetSessionConfig();
+    const toastId = toast("Rutinas restauradas", {
+      description: "Se ha recuperado la selección inicial.",
+      actionProps: {
+        children: "Deshacer",
+        onPress: () => {
+          updateSessionConfig(() => previousConfig);
+          toast.close(toastId);
+        },
+      },
+    });
   }
 
   return (
@@ -79,7 +94,7 @@ export default function SessionConfigurator({ session }: SessionConfiguratorProp
               </Link>
             </Drawer.Body>
             <Drawer.Footer>
-              <Button variant="tertiary" onPress={resetSessionConfig}>Restaurar rutinas</Button>
+              <Button variant="tertiary" onPress={restoreDefaults}>Restaurar rutinas</Button>
               <Button slot="close">Listo</Button>
             </Drawer.Footer>
           </Drawer.Dialog>

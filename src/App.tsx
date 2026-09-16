@@ -1,6 +1,6 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { Skeleton, Toast } from "@heroui/react";
-import { HashRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
+import { HashRouter, Navigate, Route, Routes, useLocation, useSearchParams } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
 import { AuthProvider } from "./context/AuthContext";
 import { TimerProvider } from "./context/TimerProvider";
@@ -8,7 +8,7 @@ import AppShell from "./components/AppShell";
 import RoutinePage from "./pages/RoutinePage";
 import WorkPage from "./pages/WorkPage";
 import { allNavigation } from "./navigation";
-import type { Exercise } from "./data/exercises";
+import { getExerciseById, type Exercise } from "./data/exercises";
 
 const ExerciseDetailModal = lazy(() => import("./components/ExerciseDetailModal"));
 const ExercisesPage = lazy(() => import("./pages/ExercisesPage"));
@@ -30,8 +30,21 @@ function PageLoading() {
 }
 
 function AppContent() {
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const selectedExercise = getExerciseById(searchParams.get("exercise") ?? "") ?? null;
+
+  function selectExercise(exercise: Exercise) {
+    const next = new URLSearchParams(searchParams);
+    next.set("exercise", exercise.id);
+    setSearchParams(next);
+  }
+
+  function closeExercise() {
+    const next = new URLSearchParams(searchParams);
+    next.delete("exercise");
+    setSearchParams(next, { replace: true });
+  }
 
   useEffect(() => {
     const current = allNavigation.find((item) => item.path === location.pathname);
@@ -41,19 +54,19 @@ function AppContent() {
   return (
     <AppShell>
       <Suspense fallback={<PageLoading />}>
-      <Routes>
-        <Route path="/morning" element={<RoutinePage session="morning" onSelect={setSelectedExercise} />} />
-        <Route path="/work" element={<WorkPage onSelect={setSelectedExercise} />} />
-        <Route path="/night" element={<RoutinePage session="night" onSelect={setSelectedExercise} />} />
-        <Route path="/exercises" element={<ExercisesPage onSelect={setSelectedExercise} />} />
-        <Route path="/physio" element={<PhysioPage onSelect={setSelectedExercise} />} />
-        <Route path="/favorites" element={<FavoritesPage onSelect={setSelectedExercise} />} />
-        <Route path="*" element={<Navigate to="/morning" replace />} />
-      </Routes>
+        <Routes>
+          <Route path="/morning" element={<RoutinePage session="morning" onSelect={selectExercise} />} />
+          <Route path="/work" element={<WorkPage onSelect={selectExercise} />} />
+          <Route path="/night" element={<RoutinePage session="night" onSelect={selectExercise} />} />
+          <Route path="/exercises" element={<ExercisesPage onSelect={selectExercise} />} />
+          <Route path="/physio" element={<PhysioPage onSelect={selectExercise} />} />
+          <Route path="/favorites" element={<FavoritesPage onSelect={selectExercise} />} />
+          <Route path="*" element={<Navigate to="/morning" replace />} />
+        </Routes>
       </Suspense>
       {selectedExercise ? (
         <Suspense fallback={null}>
-          <ExerciseDetailModal exercise={selectedExercise} onClose={() => setSelectedExercise(null)} />
+          <ExerciseDetailModal exercise={selectedExercise} onClose={closeExercise} />
         </Suspense>
       ) : null}
     </AppShell>

@@ -18,6 +18,21 @@ export function TimerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const timer = useTimer(handleComplete);
+  const { start: startTimer } = timer;
 
-  return <TimerContext value={timer}>{children}</TimerContext>;
+  const start = useCallback(() => {
+    if (!audioRef.current) {
+      audioRef.current = new Audio(ALERT_URL);
+      audioRef.current.load();
+    }
+    startTimer();
+  }, [startTimer]);
+
+  const value = {
+    ...timer,
+    start,
+    toggle: timer.isRunning ? timer.pause : start,
+  };
+
+  return <TimerContext value={value}>{children}</TimerContext>;
 }
