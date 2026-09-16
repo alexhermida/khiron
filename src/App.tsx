@@ -1,105 +1,40 @@
-import { useState } from "react";
-import { Tabs } from "@heroui/react";
+import { useEffect, useState } from "react";
+import { Toast } from "@heroui/react";
+import { HashRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
 import { AuthProvider } from "./context/AuthContext";
-import { useApp } from "./context/useApp";
-import AppHeader from "./components/AppHeader";
-import ExerciseGrid from "./components/ExerciseGrid";
+import AppShell from "./components/AppShell";
 import ExerciseDetailModal from "./components/ExerciseDetailModal";
-import PhysioTab from "./components/PhysioTab";
-import WorkTimer from "./components/WorkTimer";
-import SessionConfigurator from "./components/SessionConfigurator";
-import {
-  exercises,
-  getExerciseById,
-  WORK_EXERCISE_IDS,
-  type Exercise,
-} from "./data/exercises";
+import FavoritesPage from "./pages/FavoritesPage";
+import ExercisesPage from "./pages/ExercisesPage";
+import PhysioPage from "./pages/PhysioPage";
+import RoutinePage from "./pages/RoutinePage";
+import WorkPage from "./pages/WorkPage";
+import { allNavigation } from "./navigation";
+import type { Exercise } from "./data/exercises";
 
 function AppContent() {
-  const { sessionConfig, favorites } = useApp();
-  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(
-    null
-  );
+  const [selectedExercise, setSelectedExercise] = useState<Exercise | null>(null);
+  const location = useLocation();
 
-  const morningExercises = sessionConfig.morning
-    .map(getExerciseById)
-    .filter((e): e is Exercise => !!e);
-
-  const workExercises = WORK_EXERCISE_IDS.map(getExerciseById).filter(
-    (e): e is Exercise => !!e
-  );
-
-  const nightExercises = sessionConfig.night
-    .map(getExerciseById)
-    .filter((e): e is Exercise => !!e);
-
-  const favExercises = exercises.filter((e) => favorites.includes(e.id));
+  useEffect(() => {
+    const current = allNavigation.find((item) => item.path === location.pathname);
+    document.title = current ? `${current.label} · Khiron` : "Khiron";
+  }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
-      <AppHeader />
-      <main className="max-w-4xl mx-auto px-4 py-6">
-        <Tabs variant="secondary">
-          <Tabs.ListContainer className="mb-6">
-            <Tabs.List aria-label="Sesiones">
-              <Tabs.Tab id="morning">Mañana<Tabs.Indicator /></Tabs.Tab>
-              <Tabs.Tab id="work">Trabajo<Tabs.Indicator /></Tabs.Tab>
-              <Tabs.Tab id="night">Noche<Tabs.Indicator /></Tabs.Tab>
-              <Tabs.Tab id="physio">Fisio<Tabs.Indicator /></Tabs.Tab>
-              <Tabs.Tab id="favs">Favoritos<Tabs.Indicator /></Tabs.Tab>
-            </Tabs.List>
-          </Tabs.ListContainer>
-
-          <Tabs.Panel id="morning">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-foreground">Sesión Mañana</h2>
-              <SessionConfigurator session="morning" />
-            </div>
-            <ExerciseGrid
-              exercises={morningExercises}
-              onSelect={setSelectedExercise}
-            />
-          </Tabs.Panel>
-
-          <Tabs.Panel id="work">
-            <WorkTimer />
-            <ExerciseGrid
-              exercises={workExercises}
-              onSelect={setSelectedExercise}
-            />
-          </Tabs.Panel>
-
-          <Tabs.Panel id="night">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-foreground">Sesión Noche</h2>
-              <SessionConfigurator session="night" />
-            </div>
-            <ExerciseGrid
-              exercises={nightExercises}
-              onSelect={setSelectedExercise}
-            />
-          </Tabs.Panel>
-
-          <Tabs.Panel id="physio">
-            <PhysioTab onSelect={setSelectedExercise} />
-          </Tabs.Panel>
-
-          <Tabs.Panel id="favs">
-            <ExerciseGrid
-              exercises={favExercises}
-              onSelect={setSelectedExercise}
-              emptyMessage="No tienes ejercicios favoritos guardados aún."
-            />
-          </Tabs.Panel>
-        </Tabs>
-      </main>
-
-      <ExerciseDetailModal
-        exercise={selectedExercise}
-        onClose={() => setSelectedExercise(null)}
-      />
-    </div>
+    <AppShell>
+      <Routes>
+        <Route path="/morning" element={<RoutinePage session="morning" onSelect={setSelectedExercise} />} />
+        <Route path="/work" element={<WorkPage onSelect={setSelectedExercise} />} />
+        <Route path="/night" element={<RoutinePage session="night" onSelect={setSelectedExercise} />} />
+        <Route path="/exercises" element={<ExercisesPage onSelect={setSelectedExercise} />} />
+        <Route path="/physio" element={<PhysioPage onSelect={setSelectedExercise} />} />
+        <Route path="/favorites" element={<FavoritesPage onSelect={setSelectedExercise} />} />
+        <Route path="*" element={<Navigate to="/morning" replace />} />
+      </Routes>
+      <ExerciseDetailModal exercise={selectedExercise} onClose={() => setSelectedExercise(null)} />
+    </AppShell>
   );
 }
 
@@ -107,7 +42,10 @@ export default function App() {
   return (
     <AppProvider>
       <AuthProvider>
-        <AppContent />
+        <HashRouter>
+          <Toast.Provider placement="bottom end" aria-label="Notificaciones" />
+          <AppContent />
+        </HashRouter>
       </AuthProvider>
     </AppProvider>
   );

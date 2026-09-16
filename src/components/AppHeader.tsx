@@ -1,32 +1,22 @@
+import { NavLink } from "react-router-dom";
+import { MobileMoreMenu } from "./AppNavigation";
 import ThemeToggle from "./ThemeToggle";
 
 export default function AppHeader() {
   return (
-    <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-gray-800 sticky top-0 z-40">
-      <div className="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
-        <div>
-          <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 text-accent"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
-              />
-            </svg>
-            Khiron
-          </h1>
-          <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Movilidad Personalizada
+    <header className="sticky top-0 z-30 border-b border-border/70 bg-background/85 backdrop-blur-xl lg:hidden">
+      <div className="mx-auto flex min-h-16 max-w-6xl items-center justify-between px-4">
+        <NavLink to="/morning" className="flex items-center gap-2 rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-accent">
+          <span className="grid size-8 place-items-center rounded-xl bg-accent text-sm font-black text-accent-foreground" aria-hidden="true">K</span>
+          <span>
+            <span className="block text-base font-bold leading-tight text-foreground">Khiron</span>
+            <span className="block text-[0.6875rem] leading-tight text-muted">Movilidad Personalizada</span>
           </span>
+        </NavLink>
+        <div className="flex items-center gap-1">
+          <ThemeToggle />
+          <MobileMoreMenu />
         </div>
-        <ThemeToggle />
       </div>
     </header>
   );
