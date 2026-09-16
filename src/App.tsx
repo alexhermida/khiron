@@ -3,6 +3,7 @@ import { Toast } from "@heroui/react";
 import { HashRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
 import { AuthProvider } from "./context/AuthContext";
+import { TimerProvider } from "./context/TimerProvider";
 import AppShell from "./components/AppShell";
 import ExerciseDetailModal from "./components/ExerciseDetailModal";
 import FavoritesPage from "./pages/FavoritesPage";
@@ -43,8 +44,10 @@ export default function App() {
     <AppProvider>
       <AuthProvider>
         <HashRouter>
-          <Toast.Provider placement="bottom end" aria-label="Notificaciones" />
-          <AppContent />
+          <Toast.Provider placement="top end" aria-label="Notificaciones" />
+          <TimerProvider>
+            <AppContent />
+          </TimerProvider>
         </HashRouter>
       </AuthProvider>
     </AppProvider>
